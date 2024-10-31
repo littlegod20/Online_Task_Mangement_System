@@ -21,11 +21,10 @@ const taskSchema: Schema = new Schema({
   },
   dueDate: {
     type: Date,
-    required: true,
+    // required: true,
   },
   userId: {
     type: String,
-    required: true,
   },
   createdAt: Date,
   updatedAt: Date,

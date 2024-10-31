@@ -12,7 +12,8 @@ const verifyToken = (req, res, next) => {
         res.status(401).json({ msg: "No token provided." });
         return;
     }
-    if (!process.env.ACCESS_TOKEN_SECRET) {
+    // console.log(process.env.JWT_SECRET_KEY as string);
+    if (!process.env.JWT_SECRET_KEY) {
         res.json({ msg: "Undefined secret key for access token." });
         return;
     }
@@ -22,12 +23,17 @@ const verifyToken = (req, res, next) => {
                 throw new Error("token has expired");
             }
             req.user = user;
+            // console.log("user:", req.user);
             next();
         });
     }
     catch (error) {
         console.log(error);
-        res.status(403).json({ success: false, msg: "Invalid token." });
+        res.status(403).json({
+            success: false,
+            msg: "Invalid token.",
+            error: error instanceof Error ? error.message : String(error),
+        });
     }
 };
 exports.verifyToken = verifyToken;

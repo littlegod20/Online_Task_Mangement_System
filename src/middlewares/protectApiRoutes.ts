@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyToken, CustomRequest } from "./authorization";
+import { verifyToken } from "./authorization";
 
 export const protectApiRoutes = (
   req: Request,
@@ -10,5 +10,5 @@ export const protectApiRoutes = (
     next();
     return;
   }
-  verifyToken(req as CustomRequest, res, next);
+  verifyToken(req, res, next);
 };
