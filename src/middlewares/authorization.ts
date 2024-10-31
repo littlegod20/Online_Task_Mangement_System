@@ -14,8 +14,6 @@ export const verifyToken = (
     return;
   }
 
-  // console.log(process.env.JWT_SECRET_KEY as string);
-
   if (!process.env.JWT_SECRET_KEY) {
     res.json({ msg: "Undefined secret key for access token." });
     return;
@@ -27,7 +25,6 @@ export const verifyToken = (
         throw new Error("token has expired");
       }
       req.user = user as UserPayload;
-      // console.log("user:", req.user);
       next();
     });
   } catch (error) {
