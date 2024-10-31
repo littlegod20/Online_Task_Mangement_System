@@ -1,29 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "../models/user.models";
-
-export const emailValidator = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  const { email } = req.body;
-
-  if (!email) {
-    res.status(400).json({ success: false, msg: "Email is missing in form" });
-    return;
-  }
-
-  const isEmail = await User.findOne({ email: email });
-
-  if (isEmail) {
-    res.status(400).json({
-      success: false,
-      msg: "Email already exists. Please use a different email.",
-    });
-    return;
-  }
-  next();
-};
 
 export const passwordValidator = (
   req: Request,

@@ -27,7 +27,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 success: false,
                 msg: "Please provide the appropriate credentials.",
             });
-            return;
+            throw new Error("No credentials provided!");
         }
         // hashing password
         const hashedpassword = yield bcrypt_1.default.hash(password, 10);
@@ -47,14 +47,18 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     catch (error) {
-        console.error(error);
+        console.error("something:", error);
+        res.status(403).json({
+            msg: "An unexpected error occured",
+            error: error instanceof Error ? error.message : String(error),
+        });
+        return;
     }
 });
 exports.signUp = signUp;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email, password } = req.body;
-        console.log("loging in..");
         if (!username || !email || !password) {
             res.status(400).json({
                 success: false,
@@ -74,7 +78,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             email,
             password,
         };
-        const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET_KEY);
+        const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
         res.status(200).json({
             success: true,
             msg: `${payload.username} has successfully logged in!`,
@@ -83,7 +87,13 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.log("An internal server error occured");
-        res.status(500).json({ success: false, msg: "An internal server occured" });
+        res
+            .status(500)
+            .json({
+            success: false,
+            msg: "An internal server occured",
+            error: error instanceof Error ? error.message : String(error),
+        });
     }
 });
 exports.login = login;

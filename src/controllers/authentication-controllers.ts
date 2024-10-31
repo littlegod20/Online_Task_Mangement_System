@@ -16,7 +16,7 @@ export const signUp = async (req: Request, res: Response) => {
         success: false,
         msg: "Please provide the appropriate credentials.",
       });
-      return;
+      throw new Error("No credentials provided!");
     }
 
     // hashing password
@@ -37,14 +37,19 @@ export const signUp = async (req: Request, res: Response) => {
       msg: `${newUser.role.toUpperCase()} successfully created!`,
     });
   } catch (error) {
-    console.error(error);
+    console.error("something:", error);
+    res.status(403).json({
+      msg: "An unexpected error occured",
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return;
   }
 };
 
 export const login = async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
-    console.log("loging in..");
+
     if (!username || !email || !password) {
       res.status(400).json({
         success: false,
@@ -68,7 +73,11 @@ export const login = async (req: Request, res: Response) => {
       password,
     };
 
-    const accesstoken = jwt.sign(payload, process.env.JWT_SECRET_KEY as string);
+    const accesstoken = jwt.sign(
+      payload,
+      process.env.JWT_SECRET_KEY as string,
+      { expiresIn: "1h" }
+    );
 
     res.status(200).json({
       success: true,
@@ -77,6 +86,12 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log("An internal server error occured");
-    res.status(500).json({ success: false, msg: "An internal server occured" });
+    res
+      .status(500)
+      .json({
+        success: false,
+        msg: "An internal server occured",
+        error: error instanceof Error ? error.message : String(error),
+      });
   }
 };

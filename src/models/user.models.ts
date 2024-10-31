@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { validate } from "uuid";
 
 export interface UserProps {
   username: string;
@@ -13,11 +14,23 @@ const userSchema: Schema = new Schema({
   id: String,
   username: {
     type: String,
+    unique: true,
     required: true,
+    trim: true,
+    lowercase: true,
   },
   email: {
     type: String,
+    unique: true,
     required: true,
+    lowercase: true,
+    validate: {
+      validator: function (v: string) {
+        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+      },
+      message: (props: { value: string }) =>
+        `${props.value} is not a valid email!`,
+    },
   },
   password: {
     type: String,
@@ -27,7 +40,6 @@ const userSchema: Schema = new Schema({
     type: String,
     enum: {
       values: ["user", "admin"],
-      message: "{VALUE} is not a valid role",
     },
     default: "user",
     required: true,
@@ -38,8 +50,24 @@ const userSchema: Schema = new Schema({
   },
 });
 
-userSchema.pre("save", function () {
+userSchema.pre("save", async function (next) {
+  // updated timestamp
   this.updatedAt = new Date();
+
+  // checking if username or email already exists
+  const existingUser = await mongoose.models.User.findOne({
+    $or: [{ username: this.username }, { email: this.email }],
+  });
+
+  if (existingUser) {
+    if (existingUser.username === this.username) {
+      next(new Error("Username already exists"));
+    }
+    if (existingUser.email === this.email) {
+      next(new Error("Email already exists"));
+    }
+  }
+  next();
 });
 
 export const User = mongoose.model<UserProps>("User", userSchema);
