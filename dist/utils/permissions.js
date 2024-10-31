@@ -1,5 +1,7 @@
 "use strict";
-const PERMISSIONS = {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PERMISSIONS = void 0;
+exports.PERMISSIONS = {
     user: [
         "create:own_tasks",
         "update:own_task",

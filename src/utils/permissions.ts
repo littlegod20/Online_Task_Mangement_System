@@ -1,4 +1,4 @@
-const PERMISSIONS = {
+export const PERMISSIONS = {
   user: [
     "create:own_tasks",
     "update:own_task",
