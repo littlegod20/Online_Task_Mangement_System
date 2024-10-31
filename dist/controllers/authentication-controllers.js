@@ -73,10 +73,12 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 .json({ success: false, msg: "Inputed credentials not valid!" });
             return;
         }
+        const role = isCredentials.role;
         const payload = {
             username,
             email,
             password,
+            role,
         };
         const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
         res.status(200).json({
@@ -87,9 +89,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.log("An internal server error occured");
-        res
-            .status(500)
-            .json({
+        res.status(500).json({
             success: false,
             msg: "An internal server occured",
             error: error instanceof Error ? error.message : String(error),

@@ -67,10 +67,12 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
+    const role = isCredentials.role;
     const payload = {
       username,
       email,
       password,
+      role,
     };
 
     const accesstoken = jwt.sign(
@@ -86,12 +88,10 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log("An internal server error occured");
-    res
-      .status(500)
-      .json({
-        success: false,
-        msg: "An internal server occured",
-        error: error instanceof Error ? error.message : String(error),
-      });
+    res.status(500).json({
+      success: false,
+      msg: "An internal server occured",
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 };

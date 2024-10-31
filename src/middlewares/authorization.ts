@@ -5,6 +5,7 @@ interface UserPayload extends JwtPayload {
   username: string;
   email: string;
   password: string;
+  role: string;
 }
 
 export interface CustomRequest extends Request {
