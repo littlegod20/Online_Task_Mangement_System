@@ -11,7 +11,10 @@ export interface UserProps {
 }
 
 const userSchema: Schema = new Schema({
-  id: String,
+  id: {
+    type: String,
+    unique: true,
+  },
   username: {
     type: String,
     unique: true,
