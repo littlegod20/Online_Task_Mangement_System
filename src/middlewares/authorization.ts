@@ -1,18 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
-
-interface UserPayload extends JwtPayload {
-  username: string;
-  email: string;
-  password: string;
-}
-
-export interface CustomRequest extends Request {
-  user: UserPayload;
-}
+import jwt from "jsonwebtoken";
+import { UserPayload } from "../express";
 
 export const verifyToken = (
-  req: CustomRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): void => {
@@ -23,7 +14,7 @@ export const verifyToken = (
     return;
   }
 
-  if (!process.env.ACCESS_TOKEN_SECRET) {
+  if (!process.env.JWT_SECRET_KEY) {
     res.json({ msg: "Undefined secret key for access token." });
     return;
   }
@@ -38,6 +29,10 @@ export const verifyToken = (
     });
   } catch (error) {
     console.log(error);
-    res.status(403).json({ success: false, msg: "Invalid token." });
+    res.status(403).json({
+      success: false,
+      msg: "Invalid token.",
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 };
