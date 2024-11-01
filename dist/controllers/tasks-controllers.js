@@ -55,8 +55,24 @@ const postTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.postTask = postTask;
 const getAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const tasks = yield user_models_1.User.find({});
-        res.status(200).json({ success: true, tasks: tasks });
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        // calculating starting index for MongDB
+        const startIndex = (page - 1) * limit;
+        // Getting tasks with pagination
+        const tasks = yield task_models_1.Task.find({}).skip(startIndex).limit(limit);
+        // getting total number of tasks
+        const totalTasks = yield task_models_1.Task.countDocuments({});
+        res
+            .status(200)
+            .json({
+            success: true,
+            tasks: tasks,
+            page: page,
+            limit: limit,
+            totalPages: Math.ceil(totalTasks / limit),
+            totalTasks: totalTasks,
+        });
     }
     catch (error) {
         console.log(error);

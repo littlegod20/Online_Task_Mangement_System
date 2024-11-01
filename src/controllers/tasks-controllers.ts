@@ -50,8 +50,28 @@ export const postTask = async (req: Request, res: Response) => {
 
 export const getAllTasks = async (req: Request, res: Response) => {
   try {
-    const tasks = await User.find({});
-    res.status(200).json({ success: true, tasks: tasks });
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    // calculating starting index for MongDB
+    const startIndex = (page - 1) * limit;
+
+    // Getting tasks with pagination
+    const tasks = await Task.find({}).skip(startIndex).limit(limit);
+
+    // getting total number of tasks
+    const totalTasks = await Task.countDocuments({});
+
+    res
+      .status(200)
+      .json({
+        success: true,
+        tasks: tasks,
+        page: page,
+        limit: limit,
+        totalPages: Math.ceil(totalTasks / limit),
+        totalTasks: totalTasks,
+      });
   } catch (error) {
     console.log(error);
     res.status(400).json({
