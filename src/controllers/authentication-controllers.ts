@@ -61,18 +61,23 @@ export const login = async (req: Request, res: Response) => {
     const isCredentials = await User.findOne({ email: email });
 
     if (!isCredentials) {
-      res
-        .status(400)
-        .json({ success: false, msg: "Inputed credentials not valid!" });
+      res.status(302).json({
+        success: false,
+        msg: "User not found. Redirecting to signup...",
+        redirect: "api/auth/signup",
+      });
       return;
     }
 
+    console.log("isCredentials:", isCredentials);
     const role = isCredentials.role;
+    const id = isCredentials.id;
     const payload = {
       username,
       email,
       password,
       role,
+      id,
     };
 
     const accesstoken = jwt.sign(

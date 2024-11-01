@@ -68,17 +68,22 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const isCredentials = yield user_models_1.User.findOne({ email: email });
         if (!isCredentials) {
-            res
-                .status(400)
-                .json({ success: false, msg: "Inputed credentials not valid!" });
+            res.status(302).json({
+                success: false,
+                msg: "User not found. Redirecting to signup...",
+                redirect: "api/auth/signup",
+            });
             return;
         }
+        console.log("isCredentials:", isCredentials);
         const role = isCredentials.role;
+        const id = isCredentials.id;
         const payload = {
             username,
             email,
             password,
             role,
+            id,
         };
         const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
         res.status(200).json({

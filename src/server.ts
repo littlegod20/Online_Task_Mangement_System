@@ -19,7 +19,7 @@ mongodb._connect().then(() => {
 
   // middleware for verifying token
   app.use("/api", protectApiRoutes);
-  app.use("/api/", tasks_routes);
+  app.use("/api/tasks", tasks_routes);
 
   app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
