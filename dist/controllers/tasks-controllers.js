@@ -63,9 +63,7 @@ const getAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const tasks = yield task_models_1.Task.find({}).skip(startIndex).limit(limit);
         // getting total number of tasks
         const totalTasks = yield task_models_1.Task.countDocuments({});
-        res
-            .status(200)
-            .json({
+        res.status(200).json({
             success: true,
             tasks: tasks,
             page: page,

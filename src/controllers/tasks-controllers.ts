@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { User } from "../models/user.models";
 import { Task } from "../models/task.models";
 import { v4 as uuidv4 } from "uuid";
-import { hasPermission } from "../middlewares/rolePermissions";
 
 export const postTask = async (req: Request, res: Response) => {
   const { title, description, status, dueDate } = req.body;
@@ -62,16 +61,14 @@ export const getAllTasks = async (req: Request, res: Response) => {
     // getting total number of tasks
     const totalTasks = await Task.countDocuments({});
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        tasks: tasks,
-        page: page,
-        limit: limit,
-        totalPages: Math.ceil(totalTasks / limit),
-        totalTasks: totalTasks,
-      });
+    res.status(200).json({
+      success: true,
+      tasks: tasks,
+      page: page,
+      limit: limit,
+      totalPages: Math.ceil(totalTasks / limit),
+      totalTasks: totalTasks,
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({
