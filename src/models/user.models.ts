@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { validate } from "uuid";
 
 export interface UserProps {
   username: string;

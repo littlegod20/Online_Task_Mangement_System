@@ -46,7 +46,6 @@ const taskSchema = new mongoose_1.Schema({
     },
     dueDate: {
         type: Date,
-        // required: true,
     },
     userId: {
         type: String,

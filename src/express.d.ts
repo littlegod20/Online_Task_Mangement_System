@@ -11,4 +11,5 @@ export interface UserPayload extends JwtPayload {
   email: string;
   password: string;
   role: string;
+  user_id: string;
 }
