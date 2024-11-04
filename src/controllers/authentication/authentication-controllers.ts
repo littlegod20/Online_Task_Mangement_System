@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
-import { User } from "../models/user.models";
+import { User } from "../../models/user.models";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
