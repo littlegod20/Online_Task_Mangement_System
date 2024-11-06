@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response) => {
       res.status(302).json({
         success: false,
         msg: "User not found. Redirecting to signup...",
-        redirect: "api/auth/signup",
+        redirect: "/api/auth/signup",
       });
       return;
     }

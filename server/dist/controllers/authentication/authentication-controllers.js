@@ -71,7 +71,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(302).json({
                 success: false,
                 msg: "User not found. Redirecting to signup...",
-                redirect: "api/auth/signup",
+                redirect: "/api/auth/signup",
             });
             return;
         }
