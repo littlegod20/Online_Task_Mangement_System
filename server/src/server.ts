@@ -1,4 +1,5 @@
 import express, { Application } from "express";
+import cors from 'cors'
 import { Database } from "./services/databaseClass";
 import { passwordValidator } from "./middlewares/validators";
 import authentication_routes from "./routes/authentication-routes";
@@ -7,6 +8,7 @@ import { protectApiRoutes } from "./middlewares/protectApiRoutes";
 
 const port = 5000;
 export const app: Application = express();
+app.use(cors())
 
 async function startServer() {
   try {
@@ -19,7 +21,7 @@ async function startServer() {
     app.use("/api/auth", passwordValidator, authentication_routes);
 
     // middleware for verifying token
-    app.use("/api", protectApiRoutes);
+    app.use("/api/tasks", protectApiRoutes);
     app.use("/api/tasks", tasks_routes);
 
     app.listen(port, () => {
