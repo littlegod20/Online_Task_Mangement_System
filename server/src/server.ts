@@ -8,10 +8,10 @@ import { protectApiRoutes } from "./middlewares/protectApiRoutes";
 
 const port = 5000;
 export const app: Application = express();
-app.use(cors())
 
 async function startServer() {
   try {
+    app.use(cors())
     const mongodb = new Database();
     await mongodb._connect();
     app.use(express.json());

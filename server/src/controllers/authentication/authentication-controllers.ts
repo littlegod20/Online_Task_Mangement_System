@@ -39,8 +39,7 @@ export const signUp = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("something:", error);
     res.status(403).json({
-      msg: "An unexpected error occured",
-      error: error instanceof Error ? error.message : String(error),
+      msg: error instanceof Error ? error.message : String(error),
     });
     return;
   }

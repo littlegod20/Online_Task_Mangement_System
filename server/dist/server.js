@@ -22,10 +22,10 @@ const tasks_routes_1 = __importDefault(require("./routes/tasks-routes"));
 const protectApiRoutes_1 = require("./middlewares/protectApiRoutes");
 const port = 5000;
 exports.app = (0, express_1.default)();
-exports.app.use((0, cors_1.default)());
 function startServer() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            exports.app.use((0, cors_1.default)());
             const mongodb = new databaseClass_1.Database();
             yield mongodb._connect();
             exports.app.use(express_1.default.json());
