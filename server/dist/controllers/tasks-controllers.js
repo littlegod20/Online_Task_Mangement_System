@@ -14,7 +14,7 @@ const user_models_1 = require("../models/user.models");
 const task_models_1 = require("../models/task.models");
 const uuid_1 = require("uuid");
 const postTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, description, status, dueDate } = req.body;
+    const { title, description, status, date } = req.body;
     if (!title || !description || !status) {
         res.json({ success: false, msg: "Missing input required." });
         return;
@@ -35,7 +35,7 @@ const postTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             title,
             description,
             status,
-            dueDate,
+            date,
             createdAt: new Date(),
         });
         res.status(201).json({
@@ -57,10 +57,22 @@ const getAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
+        const { role, id } = req.user;
         // calculating starting index for MongDB
         const startIndex = (page - 1) * limit;
-        // Getting tasks with pagination
-        const tasks = yield task_models_1.Task.find({}).skip(startIndex).limit(limit);
+        let tasks;
+        if (role === "user") {
+            tasks = yield task_models_1.Task.find({ userId: id })
+                .skip(startIndex)
+                .limit(limit);
+        }
+        else if (role === "admin") {
+            // Getting tasks with pagination
+            tasks = yield task_models_1.Task.find({}).skip(startIndex).limit(limit);
+        }
+        console.log('role:', role);
+        console.log('userId:', id);
+        console.log('user', req.user);
         // getting total number of tasks
         const totalTasks = yield task_models_1.Task.countDocuments({});
         res.status(200).json({

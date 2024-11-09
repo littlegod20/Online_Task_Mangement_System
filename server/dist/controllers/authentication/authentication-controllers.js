@@ -84,7 +84,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             role,
             id,
         };
-        const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
+        const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
         res.status(200).json({
             success: true,
             msg: `${payload.username} has successfully logged in!`,

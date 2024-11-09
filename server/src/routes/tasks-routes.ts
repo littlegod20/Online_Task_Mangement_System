@@ -10,11 +10,11 @@ import { hasPermission } from "../middlewares/rolePermissions";
 
 const router = Router();
 
-router.get("/", hasPermission("view:all_tasks"), getAllTasks);
+router.get("/", getAllTasks);
 
 router.post("/", hasPermission("create:own_tasks"), postTask);
 
-router.get("/:id", getTask);
+router.get("/:id", hasPermission("view:own_tasks"), getTask);
 
 router.put("/:id", updateTask);
 
