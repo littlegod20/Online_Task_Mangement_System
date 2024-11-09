@@ -20,15 +20,17 @@ const postTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
     try {
-        const user = yield user_models_1.User.findOne({ email: req.user.email });
+        const user = yield user_models_1.User.findOne({ id: req.user.id });
         if (!user) {
+            console.log("storedUser:", req.user);
+            console.log("mongoUser:", user);
             res.status(404).json({
                 success: false,
                 msg: "User not found.",
             });
             return;
         }
-        console.log(user);
+        console.log("mongoUser:", user);
         const creatTask = yield task_models_1.Task.create({
             id: (0, uuid_1.v4)(),
             userId: user.id,
@@ -62,9 +64,7 @@ const getAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const startIndex = (page - 1) * limit;
         let tasks;
         if (role === "user") {
-            tasks = yield task_models_1.Task.find({ userId: id })
-                .skip(startIndex)
-                .limit(limit);
+            tasks = yield task_models_1.Task.find({ userId: id }).skip(startIndex).limit(limit);
         }
         else if (role === "admin") {
             // Getting tasks with pagination
