@@ -20,8 +20,9 @@ const validators_1 = require("./middlewares/validators");
 const authentication_routes_1 = __importDefault(require("./routes/authentication.routes"));
 const tasks_routes_1 = __importDefault(require("./routes/tasks.routes"));
 const protectApiRoutes_1 = require("./middlewares/protectApiRoutes");
-const port = 5000;
+const dotenv_1 = __importDefault(require("dotenv"));
 exports.app = (0, express_1.default)();
+dotenv_1.default.config();
 function startServer() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -35,8 +36,8 @@ function startServer() {
             // middleware for verifying token
             exports.app.use("/api/tasks", protectApiRoutes_1.protectApiRoutes);
             exports.app.use("/api/tasks", tasks_routes_1.default);
-            exports.app.listen(port, () => {
-                console.log(`Server listening on port ${port}`);
+            exports.app.listen(process.env.PORT, () => {
+                console.log(`Server listening on port ${process.env.PORT}`);
             });
         }
         catch (error) {

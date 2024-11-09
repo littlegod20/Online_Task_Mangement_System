@@ -21,7 +21,6 @@ class Database {
         this.databaseName = "task_management";
         this.connectionString = `mongodb://${this.server}/${this.databaseName}`;
         this._connect();
-        // this._disconnect();
     }
     _connect() {
         return __awaiter(this, void 0, void 0, function* () {
