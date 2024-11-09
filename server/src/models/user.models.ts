@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface UserProps {
+  id?: string;
   username: string;
   email: string;
   password: string;

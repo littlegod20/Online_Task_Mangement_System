@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
-import { User } from "../models/user.models";
+import { User } from "../../models/user.models";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
@@ -39,8 +39,7 @@ export const signUp = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("something:", error);
     res.status(403).json({
-      msg: "An unexpected error occured",
-      error: error instanceof Error ? error.message : String(error),
+      msg: error instanceof Error ? error.message : String(error),
     });
     return;
   }
@@ -64,7 +63,7 @@ export const login = async (req: Request, res: Response) => {
       res.status(302).json({
         success: false,
         msg: "User not found. Redirecting to signup...",
-        redirect: "api/auth/signup",
+        redirect: "/api/auth/signup",
       });
       return;
     }
@@ -83,7 +82,7 @@ export const login = async (req: Request, res: Response) => {
     const accesstoken = jwt.sign(
       payload,
       process.env.JWT_SECRET_KEY as string,
-      { expiresIn: "1h" }
+      { expiresIn: "1d" }
     );
 
     res.status(200).json({

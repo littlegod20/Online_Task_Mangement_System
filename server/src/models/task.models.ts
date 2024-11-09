@@ -19,7 +19,7 @@ const taskSchema: Schema = new Schema({
     default: "pending",
     required: true,
   },
-  dueDate: {
+  date: {
     type: Date,
   },
   userId: {

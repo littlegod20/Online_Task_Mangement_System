@@ -4,7 +4,7 @@ import { Task } from "../models/task.models";
 import { v4 as uuidv4 } from "uuid";
 
 export const postTask = async (req: Request, res: Response) => {
-  const { title, description, status, dueDate } = req.body;
+  const { title, description, status, date } = req.body;
 
   if (!title || !description || !status) {
     res.json({ success: false, msg: "Missing input required." });
@@ -29,7 +29,7 @@ export const postTask = async (req: Request, res: Response) => {
       title,
       description,
       status,
-      dueDate,
+      date,
       createdAt: new Date(),
     });
 
@@ -51,13 +51,24 @@ export const getAllTasks = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
+    const { role, id } = req.user;
 
     // calculating starting index for MongDB
     const startIndex = (page - 1) * limit;
 
-    // Getting tasks with pagination
-    const tasks = await Task.find({}).skip(startIndex).limit(limit);
+    let tasks;
+    if (role === "user") {
+      tasks = await Task.find({ userId: id })
+        .skip(startIndex)
+        .limit(limit);
+    } else if (role === "admin") {
+      // Getting tasks with pagination
+      tasks = await Task.find({}).skip(startIndex).limit(limit);
+    }
 
+    console.log('role:',role)
+    console.log('userId:', id)
+    console.log('user', req.user)
     // getting total number of tasks
     const totalTasks = await Task.countDocuments({});
 
