@@ -66,14 +66,15 @@ export const getAllTasks = async (req: Request, res: Response) => {
       tasks = await Task.find({}).skip(startIndex).limit(limit);
     }
 
-    console.log('role:',role)
-    console.log('userId:', id)
-    console.log('user', req.user)
+    // console.log('role:',role)
+    // console.log('userId:', id)
+    // console.log('user', req.user)
     // getting total number of tasks
     const totalTasks = await Task.countDocuments({});
 
     res.status(200).json({
       success: true,
+      role:role,
       tasks: tasks,
       page: page,
       limit: limit,

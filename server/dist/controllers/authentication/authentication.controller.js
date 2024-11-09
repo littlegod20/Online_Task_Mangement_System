@@ -74,7 +74,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
             return;
         }
-        console.log("isCredentials:", isCredentials);
+        // console.log("isCredentials:", isCredentials);
         const role = isCredentials.role;
         const id = isCredentials.id;
         const payload = {

@@ -1,9 +1,9 @@
 import express, { Application } from "express";
-import cors from 'cors'
-import { Database } from "./services/databaseClass";
+import cors from "cors";
+import { Database } from "./services/databaseClass.service";
 import { passwordValidator } from "./middlewares/validators";
-import authentication_routes from "./routes/authentication-routes";
-import tasks_routes from "./routes/tasks-routes";
+import authentication_routes from "./routes/authentication.routes";
+import tasks_routes from "./routes/tasks.routes";
 import { protectApiRoutes } from "./middlewares/protectApiRoutes";
 
 const port = 5000;
@@ -11,7 +11,7 @@ export const app: Application = express();
 
 async function startServer() {
   try {
-    app.use(cors())
+    app.use(cors());
     const mongodb = new Database();
     await mongodb._connect();
     app.use(express.json());
