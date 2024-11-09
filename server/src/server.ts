@@ -1,17 +1,17 @@
 import express, { Application } from "express";
-import cors from 'cors'
-import { Database } from "./services/databaseClass";
+import cors from "cors";
+import { Database } from "./services/databaseClass.service";
 import { passwordValidator } from "./middlewares/validators";
-import authentication_routes from "./routes/authentication-routes";
-import tasks_routes from "./routes/tasks-routes";
+import authentication_routes from "./routes/authentication.routes";
+import tasks_routes from "./routes/tasks.routes";
 import { protectApiRoutes } from "./middlewares/protectApiRoutes";
+import dotenv from "dotenv";
 
-const port = 5000;
 export const app: Application = express();
-
+dotenv.config();
 async function startServer() {
   try {
-    app.use(cors())
+    app.use(cors());
     const mongodb = new Database();
     await mongodb._connect();
     app.use(express.json());
@@ -24,8 +24,8 @@ async function startServer() {
     app.use("/api/tasks", protectApiRoutes);
     app.use("/api/tasks", tasks_routes);
 
-    app.listen(port, () => {
-      console.log(`Server listening on port ${port}`);
+    app.listen(process.env.PORT, () => {
+      console.log(`Server listening on port ${process.env.PORT}`);
     });
   } catch (error) {
     console.error("Error starting server:", error);

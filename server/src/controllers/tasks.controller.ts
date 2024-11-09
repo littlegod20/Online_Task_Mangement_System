@@ -12,9 +12,11 @@ export const postTask = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await User.findOne({ email: req.user.email });
+    const user = await User.findOne({ id: req.user.id });
 
     if (!user) {
+      console.log("storedUser:", req.user);
+      console.log("mongoUser:", user);
       res.status(404).json({
         success: false,
         msg: "User not found.",
@@ -22,7 +24,7 @@ export const postTask = async (req: Request, res: Response) => {
       return;
     }
 
-    console.log(user);
+    console.log("mongoUser:", user);
     const creatTask = await Task.create({
       id: uuidv4(),
       userId: user.id,
@@ -58,22 +60,21 @@ export const getAllTasks = async (req: Request, res: Response) => {
 
     let tasks;
     if (role === "user") {
-      tasks = await Task.find({ userId: id })
-        .skip(startIndex)
-        .limit(limit);
+      tasks = await Task.find({ userId: id }).skip(startIndex).limit(limit);
     } else if (role === "admin") {
       // Getting tasks with pagination
       tasks = await Task.find({}).skip(startIndex).limit(limit);
     }
 
-    console.log('role:',role)
-    console.log('userId:', id)
-    console.log('user', req.user)
+    // console.log('role:',role)
+    // console.log('userId:', id)
+    // console.log('user', req.user)
     // getting total number of tasks
     const totalTasks = await Task.countDocuments({});
 
     res.status(200).json({
       success: true,
+      role: role,
       tasks: tasks,
       page: page,
       limit: limit,

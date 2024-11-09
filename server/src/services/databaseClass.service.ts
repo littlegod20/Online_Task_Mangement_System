@@ -8,7 +8,6 @@ export class Database {
 
   constructor() {
     this._connect();
-    // this._disconnect();
   }
 
   async _connect() {
@@ -20,14 +19,4 @@ export class Database {
       throw err;
     }
   }
-
-  // async _disconnect() {
-  //   try {
-  //     await mongoose.disconnect();
-  //     return console.log("Database disconnection successful");
-  //   } catch (err) {
-  //     console.log(`Database connection failed ${err}`);
-  //     throw err;
-  //   }
-  // }
 }
