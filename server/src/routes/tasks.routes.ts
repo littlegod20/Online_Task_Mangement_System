@@ -5,11 +5,12 @@ import {
   getTask,
   postTask,
   updateTask,
-} from "../controllers/tasks-controllers";
+} from "../controllers/tasks.controller";
 import { hasPermission } from "../middlewares/rolePermissions";
 
 const router = Router();
 
+// get all tasks
 router.get("/", getAllTasks);
 
 router.post("/", hasPermission("create:own_tasks"), postTask);

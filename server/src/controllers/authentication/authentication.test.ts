@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../../server";
 import { User, UserProps } from "../../models/user.models";
-import { Database } from "../../services/databaseClass";
+import { Database } from "../../services/databaseClass.service";
 import { v4 as uuidv4 } from "uuid";
 
 let database: Database;

@@ -15,11 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const server_1 = require("../../server");
 const user_models_1 = require("../../models/user.models");
-const databaseClass_1 = require("../../services/databaseClass");
+const databaseClass_service_1 = require("../../services/databaseClass.service");
 const uuid_1 = require("uuid");
 let database;
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
-    database = new databaseClass_1.Database();
+    database = new databaseClass_service_1.Database();
     yield database._connect();
 }));
 beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {

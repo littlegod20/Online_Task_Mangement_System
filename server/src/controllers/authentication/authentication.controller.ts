@@ -68,13 +68,10 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    console.log("isCredentials:", isCredentials);
+    // console.log("isCredentials:", isCredentials);
     const role = isCredentials.role;
     const id = isCredentials.id;
     const payload = {
-      username,
-      email,
-      password,
       role,
       id,
     };
@@ -87,7 +84,6 @@ export const login = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      msg: `${payload.username} has successfully logged in!`,
       accesstoken: accesstoken,
     });
   } catch (error) {
