@@ -19,6 +19,7 @@ const databaseClass_service_1 = require("./services/databaseClass.service");
 const validators_1 = require("./middlewares/validators");
 const authentication_routes_1 = __importDefault(require("./routes/authentication.routes"));
 const tasks_routes_1 = __importDefault(require("./routes/tasks.routes"));
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const protectApiRoutes_1 = require("./middlewares/protectApiRoutes");
 const dotenv_1 = __importDefault(require("dotenv"));
 exports.app = (0, express_1.default)();
@@ -34,8 +35,9 @@ function startServer() {
             // routes for signing and logging In
             exports.app.use("/api/auth", validators_1.passwordValidator, authentication_routes_1.default);
             // middleware for verifying token
-            exports.app.use("/api/tasks", protectApiRoutes_1.protectApiRoutes);
+            exports.app.use(protectApiRoutes_1.protectApiRoutes);
             exports.app.use("/api/tasks", tasks_routes_1.default);
+            exports.app.use("/api/user", user_routes_1.default);
             exports.app.listen(process.env.PORT, () => {
                 console.log(`Server listening on port ${process.env.PORT}`);
             });

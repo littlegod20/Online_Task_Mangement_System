@@ -9,36 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCurrentUser = void 0;
+exports.fetchUser = void 0;
 const user_models_1 = require("../models/user.models");
-const getCurrentUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const fetchUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const userId = req.user.username;
-        const user = yield user_models_1.User.findById(userId).select("-password");
+        const { id } = req.user;
+        const user = yield user_models_1.User.findOne({ id: id });
         if (!user) {
             res.status(404).json({
                 success: false,
-                msg: "User not found",
+                msg: "No user found",
             });
-            return;
+            throw new Error("No user found!");
         }
-        console.log("fetched:", user);
-        res.status(200).json({
-            success: true,
-            data: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                role: user.role,
-            },
-        });
+        res.status(200).json({ success: true, user: user });
     }
     catch (error) {
-        res.status(500).json({
-            success: false,
-            msg: "Failed to fetch data",
-            error: error instanceof Error ? error.message : String(error),
-        });
+        console.log(error);
     }
 });
-exports.getCurrentUser = getCurrentUser;
+exports.fetchUser = fetchUser;

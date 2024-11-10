@@ -4,6 +4,7 @@ import { Database } from "./services/databaseClass.service";
 import { passwordValidator } from "./middlewares/validators";
 import authentication_routes from "./routes/authentication.routes";
 import tasks_routes from "./routes/tasks.routes";
+import user_routes from './routes/user.routes'
 import { protectApiRoutes } from "./middlewares/protectApiRoutes";
 import dotenv from "dotenv";
 
@@ -21,8 +22,9 @@ async function startServer() {
     app.use("/api/auth", passwordValidator, authentication_routes);
 
     // middleware for verifying token
-    app.use("/api/tasks", protectApiRoutes);
+    app.use(protectApiRoutes);
     app.use("/api/tasks", tasks_routes);
+    app.use("/api/user", user_routes);
 
     app.listen(process.env.PORT, () => {
       console.log(`Server listening on port ${process.env.PORT}`);
