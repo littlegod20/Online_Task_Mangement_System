@@ -4,7 +4,7 @@ import { User } from "../models/user.models";
 export const fetchUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.user;
-    const user = await User.findOne({ id: id });
+    const user = await User.findOne({ id: id }).select("-password");
 
     if (!user) {
       res.status(404).json({

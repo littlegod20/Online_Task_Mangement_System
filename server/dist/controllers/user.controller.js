@@ -14,7 +14,7 @@ const user_models_1 = require("../models/user.models");
 const fetchUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.user;
-        const user = yield user_models_1.User.findOne({ id: id });
+        const user = yield user_models_1.User.findOne({ id: id }).select("-password");
         if (!user) {
             res.status(404).json({
                 success: false,
