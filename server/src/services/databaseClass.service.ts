@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export class Database {
-  private readonly localhost = "127.0.0.1";
-  private readonly server = `${this.localhost}:27017`;
-  private readonly databaseName = "task_management";
-  private readonly connectionString = `mongodb://${this.server}/${this.databaseName}`;
+  private readonly connectionString = `${process.env.MONGO_URI}`;
 
   constructor() {
     this._connect();

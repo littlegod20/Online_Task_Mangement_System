@@ -28,10 +28,10 @@ function startServer() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             exports.app.use((0, cors_1.default)());
-            const mongodb = new databaseClass_service_1.Database();
-            yield mongodb._connect();
             exports.app.use(express_1.default.json());
             exports.app.use(express_1.default.urlencoded({ extended: true }));
+            const mongodb = new databaseClass_service_1.Database();
+            yield mongodb._connect();
             // routes for signing and logging In
             exports.app.use("/api/auth", validators_1.passwordValidator, authentication_routes_1.default);
             // middleware for verifying token
