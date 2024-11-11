@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export class Database {
-  private readonly connectionString = `mongodb+srv://theophilusfrimpong17:doBKnUAzF7TXdPUp@cluster0.rajps.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+  private readonly connectionString = `${process.env.MONGO_URI}`;
 
   constructor() {
     this._connect();

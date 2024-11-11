@@ -14,9 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Database = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 class Database {
     constructor() {
-        this.connectionString = `mongodb+srv://theophilusfrimpong17:doBKnUAzF7TXdPUp@cluster0.rajps.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+        this.connectionString = `${process.env.MONGO_URI}`;
         this._connect();
     }
     _connect() {
