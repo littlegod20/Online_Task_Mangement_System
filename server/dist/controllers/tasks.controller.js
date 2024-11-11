@@ -130,11 +130,12 @@ const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const { role, id } = req.user;
         const taskId = req.params.id;
-        const { title, description, status } = req.body;
+        const { title, description, status, date } = req.body;
         const data = {
             title,
             description,
             status,
+            date
         };
         if (!role) {
             throw new Error("Role not specified.");

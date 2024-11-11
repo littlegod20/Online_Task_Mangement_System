@@ -128,12 +128,13 @@ export const updateTask = async (req: Request, res: Response) => {
   try {
     const { role, id } = req.user;
     const taskId = req.params.id;
-    const { title, description, status } = req.body;
+    const { title, description, status, date } = req.body;
 
     const data = {
       title,
       description,
       status,
+      date
     };
 
     if (!role) {
