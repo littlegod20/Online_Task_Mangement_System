@@ -1,10 +1,7 @@
 import mongoose from "mongoose";
 
 export class Database {
-  private readonly localhost = "127.0.0.1";
-  private readonly server = `${this.localhost}:27017`;
-  private readonly databaseName = "task_management";
-  private readonly connectionString = `mongodb://${this.server}/${this.databaseName}`;
+  private readonly connectionString = `mongodb+srv://theophilusfrimpong17:doBKnUAzF7TXdPUp@cluster0.rajps.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
   constructor() {
     this._connect();

@@ -4,7 +4,7 @@ import { Database } from "./services/databaseClass.service";
 import { passwordValidator } from "./middlewares/validators";
 import authentication_routes from "./routes/authentication.routes";
 import tasks_routes from "./routes/tasks.routes";
-import user_routes from './routes/user.routes'
+import user_routes from "./routes/user.routes";
 import { protectApiRoutes } from "./middlewares/protectApiRoutes";
 import dotenv from "dotenv";
 
@@ -13,11 +13,11 @@ dotenv.config();
 async function startServer() {
   try {
     app.use(cors());
-    const mongodb = new Database();
-    await mongodb._connect();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
+    const mongodb = new Database();
+    await mongodb._connect();
     // routes for signing and logging In
     app.use("/api/auth", passwordValidator, authentication_routes);
 

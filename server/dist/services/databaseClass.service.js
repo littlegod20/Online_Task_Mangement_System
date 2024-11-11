@@ -16,10 +16,7 @@ exports.Database = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 class Database {
     constructor() {
-        this.localhost = "127.0.0.1";
-        this.server = `${this.localhost}:27017`;
-        this.databaseName = "task_management";
-        this.connectionString = `mongodb://${this.server}/${this.databaseName}`;
+        this.connectionString = `mongodb+srv://theophilusfrimpong17:doBKnUAzF7TXdPUp@cluster0.rajps.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
         this._connect();
     }
     _connect() {
