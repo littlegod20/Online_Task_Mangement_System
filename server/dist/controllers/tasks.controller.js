@@ -15,7 +15,7 @@ const task_models_1 = require("../models/task.models");
 const uuid_1 = require("uuid");
 const postTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, description, status, date } = req.body;
-    if (!title || !description || !status) {
+    if (!title || !description || status === "") {
         res.json({ success: false, msg: "Missing input required." });
         return;
     }
@@ -70,8 +70,8 @@ const getAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             // Getting tasks with pagination
             tasks = yield task_models_1.Task.find({}).skip(startIndex).limit(limit);
         }
-        // console.log('role:',role)
-        // console.log('userId:', id)
+        console.log('role:', role);
+        console.log('userId:', id);
         // console.log('user', req.user)
         // getting total number of tasks
         const totalTasks = yield task_models_1.Task.countDocuments({});
@@ -135,7 +135,7 @@ const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             title,
             description,
             status,
-            date
+            date,
         };
         if (!role) {
             throw new Error("Role not specified.");

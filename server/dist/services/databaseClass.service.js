@@ -14,12 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Database = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 class Database {
     constructor() {
-        this.localhost = "127.0.0.1";
-        this.server = `${this.localhost}:27017`;
-        this.databaseName = "task_management";
-        this.connectionString = `mongodb://${this.server}/${this.databaseName}`;
+        this.connectionString = `${process.env.MONGO_URI}`;
         this._connect();
     }
     _connect() {

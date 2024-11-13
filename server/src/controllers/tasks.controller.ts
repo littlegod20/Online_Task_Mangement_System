@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 export const postTask = async (req: Request, res: Response) => {
   const { title, description, status, date } = req.body;
 
-  if (!title || !description || !status) {
+  if (!title || !description || status === "") {
     res.json({ success: false, msg: "Missing input required." });
     return;
   }
@@ -66,8 +66,8 @@ export const getAllTasks = async (req: Request, res: Response) => {
       tasks = await Task.find({}).skip(startIndex).limit(limit);
     }
 
-    // console.log('role:',role)
-    // console.log('userId:', id)
+    console.log('role:',role)
+    console.log('userId:', id)
     // console.log('user', req.user)
     // getting total number of tasks
     const totalTasks = await Task.countDocuments({});
@@ -134,7 +134,7 @@ export const updateTask = async (req: Request, res: Response) => {
       title,
       description,
       status,
-      date
+      date,
     };
 
     if (!role) {
