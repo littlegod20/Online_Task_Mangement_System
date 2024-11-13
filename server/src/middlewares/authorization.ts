@@ -9,29 +9,25 @@ export const verifyToken = (
 ): void => {
   const token = req.headers.authorization?.split(" ")[1];
 
-  if (!token) {
-    res.status(401).json({ msg: "No token provided." });
-    return;
+  if (!process.env.ACCESS_TOKEN_SECRET) {
+    throw new Error("Undefined secret key for access token.");
   }
 
-  if (!process.env.JWT_SECRET_KEY) {
-    res.json({ msg: "Undefined secret key for access token." });
-    return;
-  }
-
+  // console.log("verify:", token);
+  // console.log("auth:", req.headers.authorization);
   try {
-    jwt.verify(token, process.env.JWT_SECRET_KEY as string, (err, user) => {
-      if (err) {
-        throw new Error("token has expired");
-      }
-      req.user = user as UserPayload;
-      next();
-    });
+    if (!token) {
+      res.status(401).json({ msg: "No token provided." });
+      return;
+    }
+
+    const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string);
+    req.user = user as UserPayload;
+    next();
   } catch (error) {
     console.log(error);
     res.status(403).json({
       success: false,
-      msg: "Invalid token.",
       error: error instanceof Error ? error.message : String(error),
     });
   }
