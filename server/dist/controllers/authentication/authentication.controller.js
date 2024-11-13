@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.signUp = void 0;
+exports.logout = exports.refresh = exports.login = exports.signUp = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
 const user_models_1 = require("../../models/user.models");
@@ -42,7 +42,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         res.status(200).json({
             success: true,
-            data: newUser,
+            // data: newUser,
             msg: `${newUser.role.toUpperCase()} successfully created!`,
         });
     }
@@ -77,14 +77,28 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // console.log("isCredentials:", isCredentials);
         const role = isCredentials.role;
         const id = isCredentials.id;
+        const name = isCredentials.username;
         const payload = {
             role,
             id,
+            username: name,
         };
-        const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
+        const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+        const refreshToken = jsonwebtoken_1.default.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
+        console.log('refresh:', refreshToken);
+        // setting the refresh token to the cookie in the header response
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            // secure: false,
+            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000,
+        });
+        console.log('cookie:', req.cookies.refreshToken);
         res.status(200).json({
             success: true,
             accesstoken: accesstoken,
+            role: isCredentials.role,
         });
     }
     catch (error) {
@@ -97,3 +111,24 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const refresh = (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+    console.log("refreshToken:", refreshToken);
+    // console.log('headers:', req.headers)
+    if (!refreshToken) {
+        res.status(401).json({ msg: "No refresh token" });
+        return;
+    }
+    jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err)
+            return res.sendStatus(403);
+        const accesstoken = jsonwebtoken_1.default.sign({ username: user }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+        res.json({ accesstoken });
+    });
+};
+exports.refresh = refresh;
+const logout = (req, res, next) => {
+    res.clearCookie("refreshToken");
+    res.json({ msg: "Logout successful" });
+};
+exports.logout = logout;

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import { User } from "../../models/user.models";
@@ -33,7 +33,7 @@ export const signUp = async (req: Request, res: Response) => {
     });
     res.status(200).json({
       success: true,
-      data: newUser,
+      // data: newUser,
       msg: `${newUser.role.toUpperCase()} successfully created!`,
     });
   } catch (error) {
@@ -71,20 +71,43 @@ export const login = async (req: Request, res: Response) => {
     // console.log("isCredentials:", isCredentials);
     const role = isCredentials.role;
     const id = isCredentials.id;
+    const name = isCredentials.username;
     const payload = {
       role,
       id,
+      username: name,
     };
 
     const accesstoken = jwt.sign(
       payload,
-      process.env.JWT_SECRET_KEY as string,
-      { expiresIn: "1d" }
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: "15m" }
     );
+
+    const refreshToken = jwt.sign(
+      payload,
+      process.env.REFRESH_TOKEN_SECRET as string,
+      { expiresIn: "7d" }
+    );
+
+    console.log('refresh:',refreshToken)
+
+    // setting the refresh token to the cookie in the header response
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV  === "production",
+      // secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    console.log('cookie:', req.cookies.refreshToken)
 
     res.status(200).json({
       success: true,
       accesstoken: accesstoken,
+      
+      role: isCredentials.role,
     });
   } catch (error) {
     console.log("An internal server error occured");
@@ -94,4 +117,35 @@ export const login = async (req: Request, res: Response) => {
       error: error instanceof Error ? error.message : String(error),
     });
   }
+};
+
+export const refresh = (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  console.log("refreshToken:", refreshToken);
+  // console.log('headers:', req.headers)
+  if (!refreshToken) {
+    res.status(401).json({ msg: "No refresh token" });
+    return;
+  }
+
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET as string,
+    (err: any, user: any) => {
+      if (err) return res.sendStatus(403);
+
+      const accesstoken = jwt.sign(
+        { username: user },
+        process.env.ACCESS_TOKEN_SECRET as string,
+        { expiresIn: "15m" }
+      );
+      res.json({ accesstoken });
+    }
+  );
+};
+
+export const logout = (req: Request, res: Response, next: NextFunction) => {
+  res.clearCookie("refreshToken");
+  res.json({ msg: "Logout successful" });
 };

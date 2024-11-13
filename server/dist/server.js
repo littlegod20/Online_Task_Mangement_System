@@ -22,6 +22,8 @@ const tasks_routes_1 = __importDefault(require("./routes/tasks.routes"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const protectApiRoutes_1 = require("./middlewares/protectApiRoutes");
 const dotenv_1 = __importDefault(require("dotenv"));
+const refresh_routes_1 = __importDefault(require("./routes/refresh.routes"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 exports.app = (0, express_1.default)();
 dotenv_1.default.config();
 function startServer() {
@@ -30,12 +32,15 @@ function startServer() {
             exports.app.use((0, cors_1.default)());
             exports.app.use(express_1.default.json());
             exports.app.use(express_1.default.urlencoded({ extended: true }));
+            exports.app.use((0, cookie_parser_1.default)());
             const mongodb = new databaseClass_service_1.Database();
             yield mongodb._connect();
             // routes for signing and logging In
             exports.app.use("/api/auth", validators_1.passwordValidator, authentication_routes_1.default);
+            exports.app.use("/api/refresh", refresh_routes_1.default);
             // middleware for verifying token
             exports.app.use(protectApiRoutes_1.protectApiRoutes);
+            // protected routes
             exports.app.use("/api/tasks", tasks_routes_1.default);
             exports.app.use("/api/user", user_routes_1.default);
             exports.app.listen(process.env.PORT, () => {
