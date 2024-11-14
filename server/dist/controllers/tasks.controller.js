@@ -60,6 +60,7 @@ const getAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const { role, id } = req.user;
+        // console.log('from getall tasks:', req.user)
         // calculating starting index for MongDB
         const startIndex = (page - 1) * limit;
         let tasks;
@@ -70,9 +71,6 @@ const getAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             // Getting tasks with pagination
             tasks = yield task_models_1.Task.find({}).skip(startIndex).limit(limit);
         }
-        console.log('role:', role);
-        console.log('userId:', id);
-        // console.log('user', req.user)
         // getting total number of tasks
         const totalTasks = yield task_models_1.Task.countDocuments({});
         res.status(200).json({

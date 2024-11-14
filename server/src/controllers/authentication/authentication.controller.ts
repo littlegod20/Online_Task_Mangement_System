@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { User } from "../../models/user.models";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { UserPayload } from "../../express";
 
 dotenv.config();
 
@@ -72,10 +73,11 @@ export const login = async (req: Request, res: Response) => {
     const role = isCredentials.role;
     const id = isCredentials.id;
     const name = isCredentials.username;
+
     const payload = {
       role,
       id,
-      username: name,
+      name,
     };
 
     const accesstoken = jwt.sign(
@@ -90,23 +92,20 @@ export const login = async (req: Request, res: Response) => {
       { expiresIn: "7d" }
     );
 
-    console.log('refresh:',refreshToken)
+    // console.log("refresh:", refreshToken);
 
     // setting the refresh token to the cookie in the header response
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV  === "production",
-      // secure: false,
-      sameSite: "lax",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    console.log('cookie:', req.cookies.refreshToken)
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: undefined,
+    //   // secure: false,
+    //   sameSite: "lax",
+    //   maxAge: 24 * 60 * 60 * 1000,
+    // });
 
     res.status(200).json({
       success: true,
       accesstoken: accesstoken,
-      
+      refreshToken: refreshToken,
       role: isCredentials.role,
     });
   } catch (error) {
@@ -119,30 +118,51 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const refresh = (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
+export const refresh = async (req: Request, res: Response) => {
+  const refreshToken = req.headers.cookie?.split("=")[1];
 
-  console.log("refreshToken:", refreshToken);
-  // console.log('headers:', req.headers)
-  if (!refreshToken) {
-    res.status(401).json({ msg: "No refresh token" });
+  // console.log('refreshing:', refreshToken)
+
+  const verifyRefresh = jwt.verify(
+    refreshToken as string,
+    process.env.REFRESH_TOKEN_SECRET as string
+  );
+
+  // console.log("verfy refresh:", verifyRefresh);
+
+  if (!verifyRefresh) {
+    throw new Error("refresh token has expired");
+  }
+
+  req.user = verifyRefresh as UserPayload;
+  // console.log("user from refresh:", req.user);
+
+  const isCredentials = await User.findOne({ username: req.user.name });
+
+  if (!isCredentials) {
+    res.status(401).json({
+      success: false
+    });
     return;
   }
 
-  jwt.verify(
-    refreshToken,
-    process.env.REFRESH_TOKEN_SECRET as string,
-    (err: any, user: any) => {
-      if (err) return res.sendStatus(403);
+  const role = isCredentials.role;
+  const id = isCredentials.id;
+  const name = isCredentials.username;
 
-      const accesstoken = jwt.sign(
-        { username: user },
-        process.env.ACCESS_TOKEN_SECRET as string,
-        { expiresIn: "15m" }
-      );
-      res.json({ accesstoken });
-    }
+  const payload = {
+    role,
+    id,
+    name,
+  };
+
+  const accesstoken = jwt.sign(
+    payload,
+    process.env.ACCESS_TOKEN_SECRET as string,
+    { expiresIn: "15m" }
   );
+
+  res.json({ accesstoken, role: role });
 };
 
 export const logout = (req: Request, res: Response, next: NextFunction) => {

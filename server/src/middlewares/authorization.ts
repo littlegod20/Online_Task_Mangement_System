@@ -22,6 +22,7 @@ export const verifyToken = (
     }
 
     const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string);
+    // console.log('from verifyToken:', user)
     req.user = user as UserPayload;
     next();
   } catch (error) {

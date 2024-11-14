@@ -81,23 +81,22 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const payload = {
             role,
             id,
-            username: name,
+            name,
         };
         const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
         const refreshToken = jsonwebtoken_1.default.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
-        console.log('refresh:', refreshToken);
+        // console.log("refresh:", refreshToken);
         // setting the refresh token to the cookie in the header response
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            // secure: false,
-            sameSite: "lax",
-            maxAge: 24 * 60 * 60 * 1000,
-        });
-        console.log('cookie:', req.cookies.refreshToken);
+        // res.cookie("refreshToken", refreshToken, {
+        //   httpOnly: undefined,
+        //   // secure: false,
+        //   sameSite: "lax",
+        //   maxAge: 24 * 60 * 60 * 1000,
+        // });
         res.status(200).json({
             success: true,
             accesstoken: accesstoken,
+            refreshToken: refreshToken,
             role: isCredentials.role,
         });
     }
@@ -111,21 +110,35 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
-const refresh = (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
-    console.log("refreshToken:", refreshToken);
-    // console.log('headers:', req.headers)
-    if (!refreshToken) {
-        res.status(401).json({ msg: "No refresh token" });
+const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const refreshToken = (_a = req.headers.cookie) === null || _a === void 0 ? void 0 : _a.split("=")[1];
+    // console.log('refreshing:', refreshToken)
+    const verifyRefresh = jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    // console.log("verfy refresh:", verifyRefresh);
+    if (!verifyRefresh) {
+        throw new Error("refresh token has expired");
+    }
+    req.user = verifyRefresh;
+    // console.log("user from refresh:", req.user);
+    const isCredentials = yield user_models_1.User.findOne({ username: req.user.name });
+    if (!isCredentials) {
+        res.status(401).json({
+            success: false
+        });
         return;
     }
-    jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err)
-            return res.sendStatus(403);
-        const accesstoken = jsonwebtoken_1.default.sign({ username: user }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
-        res.json({ accesstoken });
-    });
-};
+    const role = isCredentials.role;
+    const id = isCredentials.id;
+    const name = isCredentials.username;
+    const payload = {
+        role,
+        id,
+        name,
+    };
+    const accesstoken = jsonwebtoken_1.default.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+    res.json({ accesstoken, role: role });
+});
 exports.refresh = refresh;
 const logout = (req, res, next) => {
     res.clearCookie("refreshToken");
