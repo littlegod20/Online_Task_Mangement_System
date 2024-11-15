@@ -6,7 +6,7 @@ export const protectApiRoutes = (
   res: Response,
   next: NextFunction
 ) => {
-  if (req.path.startsWith("/api/auth") || req.path.startsWith("/api/refresh")) {
+  if (req.path.startsWith("/api/auth")) {
     next();
     return;
   }

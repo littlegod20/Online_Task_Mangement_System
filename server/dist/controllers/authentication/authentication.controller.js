@@ -120,7 +120,7 @@ const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         throw new Error("refresh token has expired");
     }
     req.user = verifyRefresh;
-    // console.log("user from refresh:", req.user);
+    console.log("user from refresh:", req.user);
     const isCredentials = yield user_models_1.User.findOne({ username: req.user.name });
     if (!isCredentials) {
         res.status(401).json({

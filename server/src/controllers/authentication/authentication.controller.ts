@@ -119,6 +119,7 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const refresh = async (req: Request, res: Response) => {
+
   const refreshToken = req.headers.cookie?.split("=")[1];
 
   // console.log('refreshing:', refreshToken)
@@ -135,7 +136,7 @@ export const refresh = async (req: Request, res: Response) => {
   }
 
   req.user = verifyRefresh as UserPayload;
-  // console.log("user from refresh:", req.user);
+  console.log("user from refresh:", req.user);
 
   const isCredentials = await User.findOne({ username: req.user.name });
 
