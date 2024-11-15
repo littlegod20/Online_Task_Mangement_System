@@ -95,17 +95,16 @@ export const login = async (req: Request, res: Response) => {
     // console.log("refresh:", refreshToken);
 
     // setting the refresh token to the cookie in the header response
-    // res.cookie("refreshToken", refreshToken, {
-    //   httpOnly: undefined,
-    //   // secure: false,
-    //   sameSite: "lax",
-    //   maxAge: 24 * 60 * 60 * 1000,
-    // });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: undefined,
+      // secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
       success: true,
       accesstoken: accesstoken,
-      refreshToken: refreshToken,
       role: isCredentials.role,
     });
   } catch (error) {
@@ -120,7 +119,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const refresh = async (req: Request, res: Response) => {
 
-  const refreshToken = req.headers.cookie?.split("=")[1];
+  const refreshToken = req.cookies.refreshToken
 
   // console.log('refreshing:', refreshToken)
 

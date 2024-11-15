@@ -87,16 +87,15 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const refreshToken = jsonwebtoken_1.default.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
         // console.log("refresh:", refreshToken);
         // setting the refresh token to the cookie in the header response
-        // res.cookie("refreshToken", refreshToken, {
-        //   httpOnly: undefined,
-        //   // secure: false,
-        //   sameSite: "lax",
-        //   maxAge: 24 * 60 * 60 * 1000,
-        // });
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: undefined,
+            // secure: false,
+            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000,
+        });
         res.status(200).json({
             success: true,
             accesstoken: accesstoken,
-            refreshToken: refreshToken,
             role: isCredentials.role,
         });
     }
@@ -111,8 +110,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.login = login;
 const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const refreshToken = (_a = req.headers.cookie) === null || _a === void 0 ? void 0 : _a.split("=")[1];
+    const refreshToken = req.cookies.refreshToken;
     // console.log('refreshing:', refreshToken)
     const verifyRefresh = jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     // console.log("verfy refresh:", verifyRefresh);
