@@ -29,7 +29,10 @@ dotenv_1.default.config();
 function startServer() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            exports.app.use((0, cors_1.default)());
+            exports.app.use((0, cors_1.default)({
+                origin: "http://localhost:5173", // Your React app URL
+                credentials: true,
+            }));
             exports.app.use(express_1.default.json());
             exports.app.use(express_1.default.urlencoded({ extended: true }));
             exports.app.use((0, cookie_parser_1.default)());

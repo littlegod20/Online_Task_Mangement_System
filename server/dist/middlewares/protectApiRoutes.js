@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.protectApiRoutes = void 0;
 const authorization_1 = require("./authorization");
 const protectApiRoutes = (req, res, next) => {
-    if (req.path.startsWith("/api/auth") || req.path.startsWith("/api/refresh")) {
+    if (req.path.startsWith("/api/auth")) {
         next();
         return;
     }

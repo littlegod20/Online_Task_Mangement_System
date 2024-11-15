@@ -53,8 +53,11 @@ export const getAllTasks = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const { role, id } = req.user;
+    const { role,id } = req.user;
 
+
+
+    // console.log('from getall tasks:', req.user)
     // calculating starting index for MongDB
     const startIndex = (page - 1) * limit;
 
@@ -66,9 +69,7 @@ export const getAllTasks = async (req: Request, res: Response) => {
       tasks = await Task.find({}).skip(startIndex).limit(limit);
     }
 
-    console.log('role:',role)
-    console.log('userId:', id)
-    // console.log('user', req.user)
+   
     // getting total number of tasks
     const totalTasks = await Task.countDocuments({});
 
