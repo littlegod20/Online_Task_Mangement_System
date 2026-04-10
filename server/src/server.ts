@@ -16,7 +16,7 @@ async function startServer() {
   try {
     app.use(
       cors({
-        origin: "http://localhost:5173", // Your React app URL
+        origin: process.env.FRONTEND_URL, // Your React app URL
         credentials: true,
       })
     );
