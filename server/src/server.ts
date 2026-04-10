@@ -1,3 +1,5 @@
+import "./loadEnv";
+import { logger } from "./logger";
 import express, { Application } from "express";
 import cors from "cors";
 import { Database } from "./services/databaseClass.service";
@@ -6,12 +8,10 @@ import authentication_routes from "./routes/authentication.routes";
 import tasks_routes from "./routes/tasks.routes";
 import user_routes from "./routes/user.routes";
 import { protectApiRoutes } from "./middlewares/protectApiRoutes";
-import dotenv from "dotenv";
 import refresh_route from "./routes/refresh.routes";
 import cookieParser from "cookie-parser";
 
 export const app: Application = express();
-dotenv.config();
 async function startServer() {
   try {
     app.use(
@@ -38,10 +38,10 @@ async function startServer() {
     app.use("/api/user", user_routes);
 
     app.listen(process.env.PORT, () => {
-      console.log(`Server listening on port ${process.env.PORT}`);
+      logger.info(`Server listening on port ${process.env.PORT}`);
     });
   } catch (error) {
-    console.error("Error starting server:", error);
+    logger.error("Error starting server:", error);
   }
 }
 

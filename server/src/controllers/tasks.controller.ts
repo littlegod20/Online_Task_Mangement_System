@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/user.models";
 import { Task } from "../models/task.models";
 import { v4 as uuidv4 } from "uuid";
+import { logger } from "../logger";
 
 export const postTask = async (req: Request, res: Response) => {
   const { title, description, status, date } = req.body;
@@ -15,8 +16,10 @@ export const postTask = async (req: Request, res: Response) => {
     const user = await User.findOne({ id: req.user.id });
 
     if (!user) {
-      console.log("storedUser:", req.user);
-      console.log("mongoUser:", user);
+      logger.debug("postTask user lookup miss", {
+        storedUser: req.user,
+        mongoUser: user,
+      });
       res.status(404).json({
         success: false,
         msg: "User not found.",
@@ -24,7 +27,7 @@ export const postTask = async (req: Request, res: Response) => {
       return;
     }
 
-    console.log("mongoUser:", user);
+    logger.debug("postTask creating task for user", { userId: user.id });
     const creatTask = await Task.create({
       id: uuidv4(),
       userId: user.id,
@@ -40,7 +43,7 @@ export const postTask = async (req: Request, res: Response) => {
       task: creatTask,
     });
   } catch (error) {
-    console.log("Error creating task:", error);
+    logger.error("Error creating task", error);
     res.status(500).json({
       success: false,
       msg: "Internal server error",
@@ -53,11 +56,8 @@ export const getAllTasks = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const { role,id } = req.user;
+    const { role, id } = req.user;
 
-
-
-    // console.log('from getall tasks:', req.user)
     // calculating starting index for MongDB
     const startIndex = (page - 1) * limit;
 
@@ -83,7 +83,7 @@ export const getAllTasks = async (req: Request, res: Response) => {
       totalTasks: totalTasks,
     });
   } catch (error) {
-    console.log(error);
+    logger.error("getAllTasks failed", error);
     res.status(400).json({
       success: false,
       msg: error instanceof Error ? error.message : String(error),
@@ -116,7 +116,7 @@ export const getTask = async (req: Request, res: Response) => {
       return;
     }
   } catch (error) {
-    console.log(error);
+    logger.error("getTask failed", error);
     res.status(403).json({
       success: false,
       msg: "An internal server error occured",
@@ -166,7 +166,7 @@ export const updateTask = async (req: Request, res: Response) => {
       return;
     }
   } catch (error) {
-    console.log(error);
+    logger.error("updateTask failed", error);
     res.status(403).json({
       success: false,
       msg: "An internal server error occured",
@@ -203,7 +203,7 @@ export const deleteTask = async (req: Request, res: Response) => {
       return;
     }
   } catch (error) {
-    console.log(error);
+    logger.error("deleteTask failed", error);
     res.status(403).json({
       success: false,
       msg: "An internal server error occured",

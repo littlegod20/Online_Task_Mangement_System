@@ -5,6 +5,7 @@ import { User } from "../../models/user.models";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { UserPayload } from "../../express";
+import { logger } from "../../logger";
 
 dotenv.config();
 
@@ -38,7 +39,7 @@ export const signUp = async (req: Request, res: Response) => {
       msg: `${newUser.role.toUpperCase()} successfully created!`,
     });
   } catch (error) {
-    console.error("something:", error);
+    logger.error("signUp failed", error);
     res.status(403).json({
       msg: error instanceof Error ? error.message : String(error),
     });
@@ -69,7 +70,6 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    // console.log("isCredentials:", isCredentials);
     const role = isCredentials.role;
     const id = isCredentials.id;
     const name = isCredentials.username;
@@ -92,8 +92,6 @@ export const login = async (req: Request, res: Response) => {
       { expiresIn: "7d" }
     );
 
-    // console.log("refresh:", refreshToken);
-
     // setting the refresh token to the cookie in the header response
     res.cookie("refreshToken", refreshToken, {
       httpOnly: undefined,
@@ -108,7 +106,7 @@ export const login = async (req: Request, res: Response) => {
       role: isCredentials.role,
     });
   } catch (error) {
-    console.log("An internal server error occured");
+    logger.error("login failed", error);
     res.status(500).json({
       success: false,
       msg: "An internal server occured",
@@ -119,23 +117,19 @@ export const login = async (req: Request, res: Response) => {
 
 export const refresh = async (req: Request, res: Response) => {
 
-  const refreshToken = req.cookies.refreshToken
-
-  // console.log('refreshing:', refreshToken)
+  const refreshToken = req.cookies.refreshToken;
 
   const verifyRefresh = jwt.verify(
     refreshToken as string,
     process.env.REFRESH_TOKEN_SECRET as string
   );
 
-  // console.log("verfy refresh:", verifyRefresh);
-
   if (!verifyRefresh) {
     throw new Error("refresh token has expired");
   }
 
   req.user = verifyRefresh as UserPayload;
-  console.log("user from refresh:", req.user);
+  logger.debug("user from refresh", { user: req.user });
 
   const isCredentials = await User.findOne({ username: req.user.name });
 

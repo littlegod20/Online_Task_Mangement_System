@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../models/user.models";
+import { logger } from "../logger";
 
 export const fetchUser = async (req: Request, res: Response) => {
   try {
@@ -16,6 +17,6 @@ export const fetchUser = async (req: Request, res: Response) => {
 
     res.status(200).json({ success: true, user: user });
   } catch (error) {
-    console.log(error);
+    logger.error("fetchUser failed", error);
   }
 };
